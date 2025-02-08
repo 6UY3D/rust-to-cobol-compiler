@@ -1,0 +1,23 @@
+[package]
+name = "rust-to-cobol-compiler"
+version = "0.1.0"
+edition = "2023"
+
+[dependencies]
+# Add your dependencies here
+
+[lib]
+name = "rust_to_cobol_compiler"
+path = "src/lib.rs"
+
+[features]
+default = []
+
+[dev-dependencies]
+# Add your development dependencies here
+
+[build-dependencies]
+# Add your build dependencies here
+
+[profile.release]
+tag-name = "HelloWorld"
