@@ -3,7 +3,7 @@ name = "rust-to-cobol-compiler"
 version = "0.1.0"
 edition = "2021"
 authors = ["Guyed Riley"]
-description = "transpiler converting Rust source code into COBOL."
+description = "Rust-to-COBOL compiler"
 license = "MIT"
 repository = "https://github.com/6UY3D/rust-to-cobol-compiler"
 
@@ -13,6 +13,17 @@ env_logger = "0.10"
 log = "0.4"
 thiserror = "1.0"
 regex = "1.7"
+syn = { version = "2.0", features = ["full"] }
+quote = "1.0"
+
+# These dependencies come from the Rust compiler internals.
+rustc_interface = { version = "0.0.0", package = "rustc_interface", optional = true }
+rustc_driver    = { version = "0.0.0", package = "rustc_driver", optional = true }
+rustc_span      = { version = "0.0.0", package = "rustc_span", optional = true }
+
+[features]
+default = []
+full_support = ["rustc_interface", "rustc_driver", "rustc_span"]
 
 [lib]
 name = "rust_to_cobol_compiler"
