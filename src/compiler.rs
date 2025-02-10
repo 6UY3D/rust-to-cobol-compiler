@@ -1,39 +1,31 @@
-use anyhow::Result;
-use std::fmt;
+use thiserror::Error;
 
-/// Represents possible errors during the compilation process.
-#[derive(Debug)]
+/// Represents errors that can occur during the compilation process.
+#[derive(Error, Debug)]
 pub enum CompileError {
-    /// The provided Rust source code was empty.
+    /// Indicates that the provided Rust source code was empty.
+    #[error("The source code is empty.")]
     EmptySource,
-    /// An error occurred during transformation.
+    
+    /// Indicates an error occurred during the transformation process.
+    #[error("Transformation error: {0}")]
     TransformationError(String),
 }
-
-impl fmt::Display for CompileError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            CompileError::EmptySource => write!(f, "The source code is empty."),
-            CompileError::TransformationError(msg) => write!(f, "Transformation error: {}", msg),
-        }
-    }
-}
-
-impl std::error::Error for CompileError {}
 
 /// Transpiles Rust source code into COBOL code.
 ///
 /// # Arguments
 ///
-/// * `source` - A string slice holding the Rust source code.
+/// * `source` - A string slice containing the Rust source code.
 ///
 /// # Returns
 ///
-/// A `Result` containing the generated COBOL code on success or a `CompileError` on failure.
+/// A `Result` which, on success, contains a `String` holding the generated COBOL code; on failure,
+/// returns a `CompileError`.
 ///
 /// # Example
 ///
-/// ```
+/// ```rust
 /// use rust_to_cobol_compiler::compile;
 ///
 /// let rust_code = "fn main() { println!(\"Hello, world!\"); }";
@@ -46,8 +38,9 @@ pub fn compile(source: &str) -> Result<String, CompileError> {
     }
     
     // Production-ready transformation logic:
-    // In a real implementation, proper parsing and semantic analysis of Rust code would occur here.
-    // For now, we simulate transformation by wrapping the original source in a basic COBOL skeleton.
+    // In a full implementation, this function would perform syntactic and semantic analysis
+    // of the Rust source and generate equivalent COBOL code.
+    // For now, we simulate transformation by wrapping the Rust source in a basic COBOL skeleton.
     let header = r#"IDENTIFICATION DIVISION.
 PROGRAM-ID. GENERATED.
 AUTHOR. Auto-Generated.
@@ -61,18 +54,17 @@ PROCEDURE DIVISION.
 "#;
     let footer = "\nSTOP RUN.";
     
-    // Embed the original Rust source as COBOL comments.
-    // In COBOL, comments are typically denoted by an asterisk in column 1.
-    let rust_comment: String = source
+    // Convert each line of Rust source into a COBOL comment.
+    let rust_comments: String = source
         .lines()
         .map(|line| format!("* {}", line))
         .collect::<Vec<String>>()
         .join("\n");
     
-    let cobol_code = format!("{}\n{}\n{}", header, rust_comment, footer);
+    let cobol_code = format!("{}\n{}\n{}", header, rust_comments, footer);
     
-    // If a transformation error occurs, you could return an error as follows:
-    // Err(CompileError::TransformationError("Detailed error message".into()))
+    // If detailed error reporting were needed, you might return an error:
+    // Err(CompileError::TransformationError("Detailed transformation error".into()))
     
     Ok(cobol_code)
 }
