@@ -2,14 +2,16 @@
 name = "rust-to-cobol-compiler"
 version = "0.1.0"
 edition = "2021"
-authors = ["Guyed Riley"]
-description = "transpiler converting Rust source code into COBOL."
+authors = ["Guyed Riley <guyed@example.com>"]
+description = "A production-ready transpiler converting Rust source code into COBOL."
 license = "MIT"
 repository = "https://github.com/6UY3D/rust-to-cobol-compiler"
 
 [dependencies]
 clap = { version = "4.1", features = ["derive"] }
-anyhow = "1.0"
+env_logger = "0.10"
+log = "0.4"
+thiserror = "1.0"
 
 [lib]
 name = "rust_to_cobol_compiler"
