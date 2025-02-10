@@ -1,34 +1,50 @@
-use std::env;
-use std::fs;
-use std::process;
+use clap::Parser;
+use std::{fs, process};
 
-// Import the compile function and CompileError from your library.
-// Make sure your lib.rs re-exports these items (or adjust the path as necessary).
 use rust_to_cobol_compiler::{compile, CompileError};
 
+/// Transpiles Rust source code to COBOL.
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// Path to the input Rust source file.
+    input: String,
+
+    /// Optional path to the output file; if omitted, output is printed to stdout.
+    #[arg(short, long)]
+    output: Option<String>,
+}
+
 fn main() {
-    // Collect command-line arguments.
-    // We expect the user to provide exactly one argument: the source file path.
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("Usage: {} <source_file>", args[0]);
-        process::exit(1);
-    }
-    let filename = &args[1];
+    let cli = Cli::parse();
 
-    // Attempt to read the content of the provided file.
-    let source = fs::read_to_string(filename).unwrap_or_else(|err| {
-        eprintln!("Error reading file '{}': {}", filename, err);
-        process::exit(1);
-    });
+    // Read the input file.
+    let source = match fs::read_to_string(&cli.input) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("Error reading file '{}': {}", cli.input, e);
+            process::exit(1);
+        }
+    };
 
-    // Use the compile function to convert the Rust source code to COBOL.
+    // Perform the compilation.
     match compile(&source) {
         Ok(cobol_code) => {
-            println!("Generated COBOL Code:\n\n{}", cobol_code);
+            if let Some(output_path) = cli.output {
+                if let Err(e) = fs::write(&output_path, cobol_code) {
+                    eprintln!("Error writing to file '{}': {}", output_path, e);
+                    process::exit(1);
+                }
+            } else {
+                println!("{}", cobol_code);
+            }
         }
-        Err(err) => {
-            eprintln!("Compilation error: {:?}", err);
+        Err(CompileError::EmptySource) => {
+            eprintln!("Compilation failed: input source is empty.");
+            process::exit(1);
+        }
+        Err(CompileError::TransformationError(msg)) => {
+            eprintln!("Compilation failed: {}", msg);
             process::exit(1);
         }
     }
