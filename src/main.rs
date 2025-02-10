@@ -22,12 +22,12 @@ struct Cli {
 }
 
 fn main() {
-    // Initialize logging; env_logger respects the RUST_LOG environment variable.
+    // Initialize logging (env_logger respects the RUST_LOG environment variable).
     env_logger::init();
 
     let cli = Cli::parse();
 
-    // Read source either from a file or from STDIN if input == "-"
+    // Read source from file or STDIN.
     let source = if cli.input == "-" {
         info!("Reading source from STDIN");
         let mut buffer = String::new();
@@ -49,7 +49,7 @@ fn main() {
 
     debug!("Source length: {} characters", source.len());
 
-    // Attempt to compile the Rust source to COBOL.
+    // Attempt to compile Rust source to COBOL.
     match compile(&source) {
         Ok(cobol_code) => {
             if let Some(output_path) = cli.output {
