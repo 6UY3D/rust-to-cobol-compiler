@@ -1,23 +1,24 @@
 [package]
 name = "rust-to-cobol-compiler"
 version = "0.1.0"
-edition = "2025"
+edition = "2021"
+authors = ["Guyed Riley"]
+description = "transpiler converting Rust source code into COBOL."
+license = "MIT"
+repository = "https://github.com/6UY3D/rust-to-cobol-compiler"
 
 [dependencies]
-# Add your dependencies here
+clap = { version = "4.1", features = ["derive"] }
+anyhow = "1.0"
 
 [lib]
 name = "rust_to_cobol_compiler"
 path = "src/lib.rs"
 
-[features]
-default = []
-
-[dev-dependencies]
-# Add your development dependencies here
-
-[build-dependencies]
-# Add your build dependencies here
+[[bin]]
+name = "rust-to-cobol-compiler"
+path = "src/main.rs"
 
 [profile.release]
-tag-name = "HelloWorld"
+opt-level = "z"
+lto = true
